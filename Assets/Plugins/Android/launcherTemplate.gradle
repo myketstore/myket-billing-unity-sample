@@ -1,0 +1,81 @@
+apply plugin: 'com.android.application'
+
+dependencies {
+    implementation project(':unityLibrary')
+    implementation 'com.github.myketstore:myket-billing-unity:1.1'
+    }
+
+final BAZAAR = "Bazaar-Store"
+final MYKET = "Myket-Store"
+final AppStore = "$MYKET"
+
+android {
+    compileSdkVersion **APIVERSION**
+    buildToolsVersion '**BUILDTOOLS**'
+
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        minSdkVersion **MINSDKVERSION**
+        targetSdkVersion **TARGETSDKVERSION**
+        applicationId '**APPLICATIONID**'
+        ndk {
+            abiFilters **ABIFILTERS**
+        }
+        if (AppStore == MYKET) {
+			def marketApplicationId = "ir.mservices.market"
+			def marketBindAddress = "ir.mservices.market.InAppBillingService.BIND"
+			manifestPlaceholders = [marketApplicationId: "${marketApplicationId}",
+									marketBindAddress  : "${marketBindAddress}",
+									marketPermission   : "${marketApplicationId}.BILLING"]
+			buildConfigField "String", "IAB_PUBLIC_KEY", "\"MIGeMA0GCSqGSIb3DQEBAQUAA4GMADCBiAKBgOW5KR56WBWCb5K+yyVDnh/7op0FY4zmM93CWz3xFhgUJe2WXM/8MgpTHiDxrj2Mkgt9bg30qZDtT8gzDHiTgNv6G7pZBDWuyKEariGbbQgoCoeaq3GBcNsQf418jsvOfPjzZ7Rpcl/+9ZPsp1kbJVOmZxnwAZx/wnkUduwfuf8hAgMBAAE=\""
+        } else {
+			def marketApplicationId = "com.farsitel.bazaar"
+			def marketBindAddress = "ir.cafebazaar.pardakht.InAppBillingService.BIND"
+			manifestPlaceholders = [marketApplicationId: "${marketApplicationId}",
+									marketBindAddress  : "${marketBindAddress}",
+									marketPermission   : "${marketApplicationId}.permission.PAY_THROUGH_BAZAAR"]
+			buildConfigField "String", "IAB_PUBLIC_KEY", "\"{PUBLIC_KEY}\""
+        }
+        versionCode **VERSIONCODE**
+        versionName '**VERSIONNAME**'
+
+    }
+
+    aaptOptions {
+        noCompress = **BUILTIN_NOCOMPRESS** + unityStreamingAssets.tokenize(', ')
+        ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~"
+    }**SIGN**
+
+    lintOptions {
+        abortOnError false
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled **MINIFY_DEBUG**
+            proguardFiles getDefaultProguardFile('proguard-android.txt')**SIGNCONFIG**
+            jniDebuggable true
+        }
+        release {
+            minifyEnabled **MINIFY_RELEASE**
+            proguardFiles getDefaultProguardFile('proguard-android.txt')**SIGNCONFIG**
+        }
+    }**PACKAGING_OPTIONS****PLAY_ASSET_PACKS****SPLITS**
+**BUILT_APK_LOCATION**
+    bundle {
+        language {
+            enableSplit = false
+        }
+        density {
+            enableSplit = false
+        }
+        abi {
+            enableSplit = true
+        }
+    }
+}**SPLITS_VERSION_CODE****LAUNCHER_SOURCE_BUILD_SETUP**
